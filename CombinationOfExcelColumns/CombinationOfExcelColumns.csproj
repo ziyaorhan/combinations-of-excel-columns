@@ -114,7 +114,7 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="Image\application.PNG" />
-    <Content Include="Image\combinations.PNG" />
+    <Content Include="Image\combination.PNG" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
