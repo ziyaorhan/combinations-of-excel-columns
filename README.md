@@ -2,9 +2,7 @@
 
 This project is designed to create unique combinations of excel columns.
 
-![Example](https://raw.githubusercontent.com/ziyaorhan/combinations-of-excel-columns
-/master/CombinationOfExcelColumns/Image/combination.PNG)
+![Example](https://github.com/ziyaorhan/combinations-of-excel-columns/blob/master/example.PNG)
 
-![App UI](https://raw.githubusercontent.com/ziyaorhan/combinations-of-excel-columns
-/master/CombinationOfExcelColumns/Image/application.PNG)
+![AppUI](https://github.com/ziyaorhan/combinations-of-excel-columns/blob/master/appUI.PNG)
 
