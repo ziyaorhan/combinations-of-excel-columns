@@ -32,7 +32,7 @@ namespace CombinationOfExcelColumns
             }
             catch
             {
-                throw new Exception("Excel çalışma kitabınızdaki çalışama sayfalarınız farklı isimde olmalıdır!\r\nLütfen kombinasyon için daha önce oluşturulan sayfaları siliniz...");
+                throw new Exception("The worksheets in the workbook must be of different names. If you have already run the program, delete the previous worksheets called \"Combnation - 1\"...");
             }
         }
 
@@ -51,7 +51,7 @@ namespace CombinationOfExcelColumns
             catch
             {
 
-                throw new Exception("Excel dosyası kapatılırken bilinmeyen bir hata oluştu.\r\nLütfen işlemi tekrarlayınız.");
+                throw new Exception("An unknown error occurred while closing the Excel file.");
             }
         }
 
@@ -86,7 +86,7 @@ namespace CombinationOfExcelColumns
             }
             catch
             {
-                throw new Exception("Excel açılırken bir hata oluştu!\r\nÇalışma sayfa numarasını doğru belirttiğinizden emin olunuz.");
+                throw new Exception("An unknown error occurred while opening the Excel file!");
             }
         }
     }

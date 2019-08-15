@@ -6,15 +6,15 @@ namespace CombinationOfExcelColumns
 {
     public partial class FrmCombination : Form
     {
-        #region Değişkenler
+        #region Variables
         ExcelApp excelApp;
         Excel.Worksheet newSheet;
-        List<int> filledColumnsIndex;// dolu sütunların indeksleri
-        int filledColumnsCount;// dolu sütun sayısı
-        List<string> rowValues;// dolu sütunların satırlarını toplamak için
-        List<FilledColumnAndRows> filledColumnAndRows; //dolu sütun indeksleri ve satırları
-        List<HeaderCell> columnHeaderNames;//sütun başlıkları
-        List<DataCell> combinations;//kombinasyonlar
+        List<int> filledColumnsIndex;
+        int filledColumnsCount;
+        List<string> rowValues;
+        List<FilledColumnAndRows> filledColumnAndRows;
+        List<HeaderCell> columnHeaderNames;
+        List<DataCell> combinations;
         int currentRow;
         int currentColumn;
         string cellValue;
@@ -45,41 +45,44 @@ namespace CombinationOfExcelColumns
                     Cursor.Current = Cursors.WaitCursor;
                     var startTime = DateTime.Now;
                     //1-
-                    lblStatus.Text = "Excel uygulaması açılıyor...";
+                    lblStatus.Text = "Opening excel application...";
                     excelApp = new ExcelApp(lblFileName.Text, Convert.ToInt32(nudWorkSheetNum.Value));
                     //2-
-                    lblStatus.Text = "Dolu sütunlar saptanıyor...";
-                    GetFilledColumnsAndRows(GetFilledColumns(3), 3);
+                    lblStatus.Text = "Collecting column headers ...";
+                    var headers = GetColumnHeaderNames(Convert.ToInt32(nudHeaderStartRow.Value), Convert.ToInt32(nudHeaderEndRow.Value));
                     //3-
-                    lblStatus.Text = "Kombinasyonlar için yeni çalışma sayfası oluşturuluyor...";
-                    newSheet = excelApp.CreateNewSheet(string.Format("Kombinasyonlar-{0}", Convert.ToInt32(nudWorkSheetNum.Value)));
+                    lblStatus.Text = "Collecting filled columns and rows ...";
+                    GetFilledColumnsAndRows(GetFilledColumns(3), 3);
                     //4-
-                    lblStatus.Text = "Kombinasyonlar oluşturuluyor...";
+                    lblStatus.Text = "Creating new work sheet for combination...";
+                    newSheet = excelApp.CreateNewSheet(string.Format("Combinations-{0}", Convert.ToInt32(nudWorkSheetNum.Value)));
+                    //5-
+                    lblStatus.Text = "Creating combinations...";
                     combinations = new List<DataCell>();
                     combinations = GetCombinationAsRecursive(0, new List<DataCell>());
-                    //5-
-                    lblStatus.Text = "Sütun başlıkları yazdırılıyor...";
-                    var headers = GetColumnHeaderNames(Convert.ToInt32(nudHeaderStartRow.Value), Convert.ToInt32(nudHeaderEndRow.Value));
-                    WriteColumnHeaderName(headers);
                     //6-
-                    lblStatus.Text = "Kombinasyonlar yazdırılıyor...";
-                    WriteCombinationToNewSheet(Convert.ToInt32(nudDataStartRow.Value), combinations);
+                    lblStatus.Text = "Printing column headers to excel file...";
+                    WriteColumnHeaderName(headers);
                     //7-
-                    lblStatus.Text = "Excel kapatılıyor...";
+                    lblStatus.Text = "Printing combinations to excel file...";
+                    WriteCombinationToNewSheet(Convert.ToInt32(nudDataStartRow.Value), combinations);
+                    //8-
+                    lblStatus.Text = "Closing excel...";
                     excelApp.CloseExcel();
                     var endTime = DateTime.Now;
                     TimeSpan timeSpan = (endTime - startTime);
-                    lblStatus.Text = string.Format("İşlem {0} saniyede tamamlandı.", timeSpan.TotalSeconds);
+                    lblStatus.Text = string.Format("The process was completed in {0} seconds.", timeSpan.TotalSeconds);
                     Cursor.Current = Cursors.Default;
                 }
                 else
                 {
-                    MessageBox.Show("Excel dosyası seçiniz!", "Bilgi!", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    MessageBox.Show("Please select excel file.", "Info!", MessageBoxButtons.OK, MessageBoxIcon.Information);
                 }
             }
             catch (Exception ex)
             {
                 MessageBox.Show(ex.Message, "Hata!", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                excelApp.CloseExcel();
             }
         }
 
@@ -89,11 +92,11 @@ namespace CombinationOfExcelColumns
             filledColumnAndRows = new List<FilledColumnAndRows>();
             for (int i = 0; i < filledColumnsCount; i++)
             {
-                lblStatus.Text = filledColumns[i].ToString() + ". sütun için satırlar toplanıyor...";
+                lblStatus.Text = string.Format("Collecting rows of column {0} ...", filledColumns[i].ToString());
                 filledColumnAndRows.Add(new FilledColumnAndRows
                 {
-                    FilledColumnIndeks = filledColumns[i],//dolu sütun indeksi
-                    RowsOfFilledColumn = GetRowsByColumnIndex(filledColumns[i], startRowIndex)// dolu sütun indeksine göre satırlar.
+                    FilledColumnIndeks = filledColumns[i],
+                    RowsOfFilledColumn = GetRowsByColumnIndex(filledColumns[i], startRowIndex)
                 });
             }
             return filledColumnAndRows;
@@ -106,7 +109,7 @@ namespace CombinationOfExcelColumns
                 rowValues = new List<string>();
                 for (currentRow = startRowIndex; currentRow <= excelApp.RowCount; currentRow++)
                 {
-                    cellValue = (string)(excelApp.Range.Cells[currentRow, columnIndex] as Excel.Range).Value2;
+                    cellValue = Convert.ToString((excelApp.Range.Cells[currentRow, columnIndex] as Excel.Range).Value2);
                     if (!String.IsNullOrWhiteSpace(cellValue))
                     {
                         rowValues.Add(cellValue);
@@ -116,7 +119,7 @@ namespace CombinationOfExcelColumns
             }
             catch
             {
-                throw new Exception("Sütun indeksine göre satırlar çekilirken bir hata oluştu.\r\nLütfen işlemi yeniden başlatınız.");
+                throw new Exception("An error occurred while gathering rows by column index.");
             }
         }
 
@@ -129,7 +132,7 @@ namespace CombinationOfExcelColumns
                 {
                     for (currentRow = startRowIndex; currentRow <= excelApp.RowCount; currentRow++)
                     {
-                        cellValue = (string)(excelApp.Range.Cells[currentRow, currentColumn] as Excel.Range).Value2;
+                        cellValue = Convert.ToString((excelApp.Range.Cells[currentRow, currentColumn] as Excel.Range).Value2);
 
                         if (String.IsNullOrWhiteSpace(cellValue))
                         {
@@ -148,7 +151,7 @@ namespace CombinationOfExcelColumns
             }
             catch
             {
-                throw new Exception("Dolu sütunlar saptanırken bir hata oluştu.\r\nLütfen işlemi yeniden başlatınız.");
+                throw new Exception("An error occurred while detecting full columns.");
             }
         }
 
@@ -161,7 +164,7 @@ namespace CombinationOfExcelColumns
                 {
                     for (currentRow = startRowIndex; currentRow <= endRowIndex; currentRow++)
                     {
-                        cellValue = (string)(excelApp.Range.Cells[currentRow, currentColumn] as Excel.Range).Value2;
+                        cellValue = Convert.ToString((excelApp.Range.Cells[currentRow, currentColumn] as Excel.Range).Value2);
                         if (!String.IsNullOrWhiteSpace(cellValue))
                         {
                             columnHeaderNames.Add(new HeaderCell
@@ -177,7 +180,7 @@ namespace CombinationOfExcelColumns
             }
             catch
             {
-                throw new Exception("Sütun başlıkları çekilirken bir hata oluştu.\r\nLütfen işlemi yeniden başlatınız.");
+                throw new Exception("An error occurred while fetching column headers.");
             }
         }
 
@@ -216,7 +219,7 @@ namespace CombinationOfExcelColumns
             catch
             {
                 Cursor.Current = Cursors.Default;
-                throw new Exception("Sütun başlıkları yazılırken bir hata oluştu.\r\nLütfen işlemi yeniden başlatınız.");
+                throw new Exception("An error occurred while writing column headers.");
             }
         }
 
@@ -239,7 +242,7 @@ namespace CombinationOfExcelColumns
             catch
             {
                 Cursor.Current = Cursors.Default;
-                throw new Exception("Kombinasyonlar yazılırken bir hata oluştu.\r\nLütfen işlemi yeniden başlatınız.");
+                throw new Exception("An error occurred while writing combinations.");
             }
         }
     }

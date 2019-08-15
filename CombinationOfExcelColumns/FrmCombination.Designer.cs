@@ -87,7 +87,7 @@
             this.groupBox1.Size = new System.Drawing.Size(304, 95);
             this.groupBox1.TabIndex = 1;
             this.groupBox1.TabStop = false;
-            this.groupBox1.Text = "3-Column Headers";
+            this.groupBox1.Text = "3-Column Header";
             // 
             // nudHeaderEndRow
             // 
@@ -203,7 +203,7 @@
             this.lblFileName.Name = "lblFileName";
             this.lblFileName.Size = new System.Drawing.Size(189, 27);
             this.lblFileName.TabIndex = 1;
-            this.lblFileName.Text = "File Name";
+            this.lblFileName.Text = "File Path";
             this.lblFileName.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
             // 
             // btnSelectFile
@@ -227,7 +227,7 @@
             this.btnCreateCombinations.Name = "btnCreateCombinations";
             this.btnCreateCombinations.Size = new System.Drawing.Size(304, 46);
             this.btnCreateCombinations.TabIndex = 4;
-            this.btnCreateCombinations.Text = "CREATE COMBİNATİONS";
+            this.btnCreateCombinations.Text = "CREATE COMBINATIONS";
             this.btnCreateCombinations.UseVisualStyleBackColor = true;
             this.btnCreateCombinations.Click += new System.EventHandler(this.btnCreateCombinations_Click);
             // 
